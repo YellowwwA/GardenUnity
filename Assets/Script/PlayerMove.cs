@@ -4,7 +4,7 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     public float moveSpeed = 5f;
-    public float rotationSpeed = 720f; // 도/초
+    public float rotationSpeed = 100f; // 도/초
 
     private CharacterController controller;
 
@@ -13,7 +13,7 @@ public class PlayerMove : MonoBehaviour
         controller = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
 
-        transform.rotation = Quaternion.Normalize(transform.rotation);
+        //transform.rotation = Quaternion.Normalize(transform.rotation);
     }
 
     void Update()

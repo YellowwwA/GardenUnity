@@ -4,12 +4,19 @@ using UnityEngine;
 
 public class ModeSwitch : MonoBehaviour
 {
-    public GameObject playerController;      // 캐릭터 이동을 담당하는 오브젝트
-    public Camera topDownCamera;             // 탑다운 카메라
-    public Camera playerCamera;              // 기존 캐릭터 카메라
-    public GameObject placementUI;           // 배치 모드용 UI (있다면)
+    public GameObject playerController;      // 캐릭터 이동 스크립트가 붙은 오브젝트
+    public Camera topDownCamera;             // 배치 모드용 탑다운 카메라
+    public Camera playerCamera;              // 플레이어 시점 카메라
+    public GameObject placementUI;           // 배치 모드 UI
 
     private bool isInPlacementMode = false;
+
+    void Start()
+    {
+        // 커서 항상 보이게 설정
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
 
     void Update()
     {
@@ -22,19 +29,17 @@ public class ModeSwitch : MonoBehaviour
 
     void SwitchMode(bool placementMode)
     {
+        // 카메라 전환
+        playerCamera.enabled = !placementMode;
+        topDownCamera.enabled = placementMode;
 
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        // 캐릭터 이동 스크립트 활성/비활성
+        var moveScript = playerController.GetComponent<PlayerMove>();
+        if (moveScript != null)
+            moveScript.enabled = !placementMode;
 
-        //playerController.SetActive(!placementMode);      // 이동 비활성화
-        playerController.GetComponent<PlayerMove>().enabled = !placementMode;
-        playerCamera.enabled = !placementMode;           // 캐릭터 시점 OFF
-        topDownCamera.enabled = placementMode;           // 탑다운 시점 ON
-
+        // 배치 UI 활성화
         if (placementUI != null)
-        {
-            playerController.GetComponent<PlayerMove>().enabled = placementMode;
-            placementUI.SetActive(placementMode);        // 배치 UI on/off
-        }
+            placementUI.SetActive(placementMode);
     }
 }

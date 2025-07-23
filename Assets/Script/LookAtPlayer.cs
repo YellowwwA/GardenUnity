@@ -1,21 +1,22 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class LookAtPlayer : MonoBehaviour
 {
-    public Transform player;  // Inspector에서 직접 할당하거나 태그로 찾아도 됨
+    public Transform player;
 
-    void Start()
+    void OnEnable()
     {
-        // 플레이어를 태그로 자동 할당하고 싶다면:
-//        if (player == null)
+        if (player == null)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-            Debug.Log(playerObj); // null이 아닌지 확인
             if (playerObj != null)
             {
                 player = playerObj.transform;
+            }
+            else
+            {
+                Debug.LogWarning("❌ Player 태그가 붙은 오브젝트를 찾지 못했습니다.");
             }
         }
     }
@@ -24,9 +25,9 @@ public class LookAtPlayer : MonoBehaviour
     {
         if (player != null)
         {
+            //Debug.Log($"LookAt 실행 중: {gameObject.name}");
             Vector3 targetPos = player.position;
-            targetPos.y = transform.position.y;  // 높이(y축)는 무시
-
+            targetPos.y = transform.position.y;  // y축 고정
             transform.LookAt(targetPos);
         }
     }
