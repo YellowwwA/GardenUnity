@@ -2970,7 +2970,7 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
+  m_Color: {r: 0.7056604, g: 0.67886937, b: 0.6058028, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
@@ -3417,13 +3417,13 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 285225102}
-  - {fileID: 708457283}
-  - {fileID: 2098203452}
-  - {fileID: 1540801400}
   - {fileID: 1915962639}
+  - {fileID: 708457283}
   - {fileID: 1798296210}
   - {fileID: 463750814}
   - {fileID: 607926738}
+  - {fileID: 2098203452}
+  - {fileID: 1540801400}
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

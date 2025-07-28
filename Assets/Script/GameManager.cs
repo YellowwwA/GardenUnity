@@ -1,3 +1,4 @@
+/*
 using UnityEngine;
 using System;
 using SimpleJSON;  // JSON 파싱용 라이브러리 (or UnityEngine.JsonUtility)
@@ -22,5 +23,5 @@ public class GameManager : MonoBehaviour
         jwtToken = user.token;
         Debug.Log($"UserID: {userId}, Token: {jwtToken}");
     }
-}
+}*/
 

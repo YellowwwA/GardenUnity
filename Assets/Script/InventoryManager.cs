@@ -20,27 +20,27 @@ public class InventoryManager : MonoBehaviour
     // ✅ 배치 등록 (GameObject 포함)
     public void RegisterPlacedPhoto(Photo photo, GameObject obj)
     {
-        placedPhotos.RemoveAll(p => p.pixel_id == photo.pixel_id);
+        placedPhotos.RemoveAll(p => p.plant_id == photo.plant_id);
         placedPhotos.Add(photo);
-        placedPhotoObjects[photo.pixel_id] = obj;
+        placedPhotoObjects[photo.plant_id] = obj;
     }
 
     // ✅ 기존 방식 유지 (GameObject 없이)
     public void RegisterPlacedPhoto(Photo photo)
     {
-        placedPhotos.RemoveAll(p => p.pixel_id == photo.pixel_id);
+        placedPhotos.RemoveAll(p => p.plant_id == photo.plant_id);
         placedPhotos.Add(photo);
     }
 
     // ✅ 배치 해제 및 오브젝트 제거
     public void UnregisterPlacedPhoto(Photo photo)
     {
-        placedPhotos.RemoveAll(p => p.pixel_id == photo.pixel_id);
+        placedPhotos.RemoveAll(p => p.plant_id == photo.plant_id);
 
-        if (placedPhotoObjects.TryGetValue(photo.pixel_id, out GameObject obj))
+        if (placedPhotoObjects.TryGetValue(photo.plant_id, out GameObject obj))
         {
             Destroy(obj);
-            placedPhotoObjects.Remove(photo.pixel_id);
+            placedPhotoObjects.Remove(photo.plant_id);
         }
     }
 
@@ -57,36 +57,36 @@ public class InventoryManager : MonoBehaviour
         Sprite icon = existingObj.GetComponentInChildren<SpriteRenderer>()?.sprite;
         if (icon == null)
         {
-            Debug.LogWarning($"❌ Sprite 없음 for {photo.pixel_id}");
+            Debug.LogWarning($"❌ Sprite 없음 for {photo.plant_id}");
             return;
         }
 
         photo.placenum = 0;
 
         // 🔐 인벤토리 중복 제거 (UI + currentItems 둘 다)
-        currentItems.RemoveAll(i => i.photo_id == photo.pixel_id);
+        currentItems.RemoveAll(i => i.photo_id == photo.plant_id);
         foreach (Transform child in inventoryPanel)
         {
             var ui = child.GetComponent<ItemUI>();
-            if (ui != null && ui.itemData.photo_id == photo.pixel_id)
+            if (ui != null && ui.itemData.photo_id == photo.plant_id)
             {
                 Destroy(child.gameObject);
             }
         }
 
         // 🔍 이미 클론해둔 게 있다면 재사용
-        if (placedPhotoObjects.TryGetValue(photo.pixel_id, out GameObject existingClone))
+        if (placedPhotoObjects.TryGetValue(photo.plant_id, out GameObject existingClone))
         {
             if (!existingClone.activeInHierarchy)
             {
-                Debug.Log($"♻️ 기존 클론 재사용 (pixel_id={photo.pixel_id})");
+                Debug.Log($"♻️ 기존 클론 재사용 (plant_id={photo.plant_id})");
 
                 ItemData item = new ItemData
                 {
-                    itemName = $"Photo {photo.pixel_id}",
+                    itemName = $"Photo {photo.plant_id}",
                     icon = icon,
                     worldPrefab = existingClone,
-                    photo_id = photo.pixel_id
+                    photo_id = photo.plant_id
                 };
 
                 AddItem(item);
@@ -101,21 +101,21 @@ public class InventoryManager : MonoBehaviour
         GameObject newPrefab = Instantiate(existingObj);
         newPrefab.SetActive(false);
 
-        placedPhotoObjects[photo.pixel_id] = newPrefab;
+        placedPhotoObjects[photo.plant_id] = newPrefab;
 
         ItemData newItem = new ItemData
         {
-            itemName = $"Photo {photo.pixel_id}",
+            itemName = $"Photo {photo.plant_id}",
             icon = icon,
             worldPrefab = newPrefab,
-            photo_id = photo.pixel_id
+            photo_id = photo.plant_id
         };
 
         AddItem(newItem);
         RegisterPlacedPhoto(photo, newPrefab);
 
         Destroy(existingObj);
-        Debug.Log($"🧩 새로운 클론 생성 및 등록 (pixel_id={photo.pixel_id})");
+        Debug.Log($"🧩 새로운 클론 생성 및 등록 (plant_id={photo.plant_id})");
     }
 
 
@@ -130,7 +130,7 @@ public class InventoryManager : MonoBehaviour
     // ✅ Resources 방식 인벤토리 등록
     /*    public void AddPhotoItem(Photo p)
         {
-            string id = p.pixel_id.ToString();
+            string id = p.plant_id.ToString();
 
             GameObject prefab = Resources.Load<GameObject>($"Prefabs/{id}");
             Sprite icon = Resources.Load<Sprite>($"Icons/{id}");
@@ -146,7 +146,7 @@ public class InventoryManager : MonoBehaviour
                 itemName = $"Photo {id}",
                 icon = icon,
                 worldPrefab = prefab,
-                photo_id = p.pixel_id
+                photo_id = p.plant_id
             };
 
             AddItem(item);
@@ -159,22 +159,22 @@ public class InventoryManager : MonoBehaviour
         Sprite icon = prefabInstance.GetComponentInChildren<SpriteRenderer>()?.sprite;
         if (icon == null)
         {
-            Debug.LogWarning($"❌ 아이콘 스프라이트 없음 for photo {photo.pixel_id}");
+            Debug.LogWarning($"❌ 아이콘 스프라이트 없음 for photo {photo.plant_id}");
             return;
         }
 
         // ✅ 누락된 정보 보완
-        photo.user_id = SaveManager.Instance.userId.ToString();
+        photo.user_id = SaveManager.Instance.userId;
         photo.s3_key = string.IsNullOrEmpty(photo.s3_key)
-            ? $"plantimage/pixel_image/{photo.pixel_id}.png"
+            ? $"plantimage/pixel_image/{photo.plant_id}.png"
             : photo.s3_key;
 
         ItemData item = new ItemData
         {
-            itemName = $"Photo {photo.pixel_id}",
+            itemName = $"Photo {photo.plant_id}",
             icon = icon,
             worldPrefab = prefabInstance,
-            photo_id = photo.pixel_id
+            photo_id = photo.plant_id
         };
 
         AddItem(item);

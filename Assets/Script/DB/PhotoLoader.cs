@@ -53,7 +53,7 @@ public class PhotoLoader : MonoBehaviour
             Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one * 0.5f);
 
             GameObject photoObj = Instantiate(photoPrefabTemplate, inventoryParent);
-            photoObj.name = $"photo_{p.pixel_id}";
+            photoObj.name = $"photo_{p.plant_id}";
 
             SpriteRenderer renderer = photoObj.GetComponentInChildren<SpriteRenderer>();
             if (renderer != null)

@@ -32,11 +32,11 @@ public class SaveManager : MonoBehaviour
         // ✅ 누락된 정보 보완 (user_id, image_url → s3_key로 변경 필요 시 아래 수정)
         foreach (Photo photo in placedPhotos)
         {
-            if (string.IsNullOrEmpty(photo.user_id))
-                photo.user_id = userId.ToString();
+            if (photo.user_id == 0)
+                photo.user_id = userId;
 
             if (string.IsNullOrEmpty(photo.s3_key))
-                photo.s3_key = $"plantimage/pixel_image/{photo.pixel_id}.png";
+                photo.s3_key = $"plantimage/pixel_image/{photo.plant_id}.png";
 
             // image_url 도 FastAPI에서 받을 경우 필요하면 추가
 //            if (string.IsNullOrEmpty(photo.image_url))

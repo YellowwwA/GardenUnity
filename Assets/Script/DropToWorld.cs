@@ -103,7 +103,7 @@ public class DropToWorld : MonoBehaviour
 
             Photo newPhoto = new Photo
             {
-                pixel_id = itemData.photo_id,
+                plant_id = itemData.photo_id,
                 placenum = dropIndex + 1
             };
 
