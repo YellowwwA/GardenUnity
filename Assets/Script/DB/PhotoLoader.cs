@@ -5,12 +5,17 @@ using UnityEngine.Networking;
 
 public class PhotoLoader : MonoBehaviour
 {
-    public string userId = "1";
+    public int userId = 1;
     public Transform inventoryParent;
     public GameObject photoPrefabTemplate;
 
     void Start()
     {
+        // 🔽 GameManager의 userId를 참조해서 설정
+        userId = int.TryParse(GameManager.userId, out int parsedId) ? parsedId : 0;
+
+        Debug.Log($"📦 PhotoLoader에서 받은 userId: {userId}");
+
         StartCoroutine(LoadPhotos());
     }
 

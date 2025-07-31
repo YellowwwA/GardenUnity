@@ -14,6 +14,9 @@ public class PlayerMove : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
 
         //transform.rotation = Quaternion.Normalize(transform.rotation);
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     void Update()

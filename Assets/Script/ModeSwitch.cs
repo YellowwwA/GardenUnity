@@ -18,16 +18,14 @@ public class ModeSwitch : MonoBehaviour
         Cursor.visible = true;
     }
 
-    void Update()
+    // 버튼에서 호출할 함수
+    public void OnModeSwitchButtonClicked()
     {
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            isInPlacementMode = !isInPlacementMode;
-            SwitchMode(isInPlacementMode);
-        }
+        isInPlacementMode = !isInPlacementMode;
+        SwitchMode(isInPlacementMode);
     }
 
-    void SwitchMode(bool placementMode)
+    private void SwitchMode(bool placementMode)
     {
         // 카메라 전환
         playerCamera.enabled = !placementMode;
