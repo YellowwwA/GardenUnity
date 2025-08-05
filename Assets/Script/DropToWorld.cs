@@ -35,6 +35,7 @@ public class DropToWorld : MonoBehaviour
         Quaternion rotation = Quaternion.Euler(10f, 0f, 0f);
 
         GameObject item = Instantiate(prefab, point + offset, rotation);
+        item.SetActive(true); // ✅ 반드시 활성화시켜야 화면에 나타남
 
         SetupVisuals(item);
 
@@ -45,6 +46,7 @@ public class DropToWorld : MonoBehaviour
         DropPointManager.Instance.ReserveDropPoint(index);
         InventoryManager.Instance.RegisterPlacedPhoto(photo, item);
     }
+
 
     /// <summary>
     /// 인벤토리에서 드래그로 배치
@@ -67,7 +69,21 @@ public class DropToWorld : MonoBehaviour
             // ✅ 비활성화된 프리팹이라면 그대로 재사용
             if (!itemData.worldPrefab.activeSelf)
             {
-                item = itemData.worldPrefab;
+                //item = itemData.worldPrefab;
+                //item.transform.position = nearestDropPoint + offset;
+                //item.transform.rotation = rotation;
+                //item.SetActive(true);
+
+                // ✅ 아래처럼 강제 인스턴스화
+                if (itemData.worldPrefab.scene.IsValid())
+                {
+                    Debug.Log("♻️ 씬에 존재하는 worldPrefab 감지 → 복사");
+                    item = Instantiate(itemData.worldPrefab);
+                }
+                else
+                {
+                    item = itemData.worldPrefab; // 리소스에서 불러온 원본이면 그냥 사용
+                }
                 item.transform.position = nearestDropPoint + offset;
                 item.transform.rotation = rotation;
                 item.SetActive(true);
@@ -78,9 +94,9 @@ public class DropToWorld : MonoBehaviour
             {
                 // 이미 활성화 상태이면 새로 인스턴스 생성
                 item = GameObject.Instantiate(itemData.worldPrefab, nearestDropPoint + offset, rotation);
+                item.SetActive(true); // ✅ 반드시 활성화시켜야 화면에 나타남
                 Debug.Log("✨ 새 프리팹 인스턴스 생성");
             }
-
             SetupVisuals(item);
 
             // LookAtPlayer 활성화
@@ -133,7 +149,7 @@ public class DropToWorld : MonoBehaviour
         SpriteRenderer renderer = obj.GetComponentInChildren<SpriteRenderer>();
         if (renderer != null && renderer.sprite != null)
         {
-            obj.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
+            obj.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
 
             float height = renderer.sprite.bounds.size.y;
 

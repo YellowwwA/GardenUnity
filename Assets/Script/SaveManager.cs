@@ -48,13 +48,15 @@ public class SaveManager : MonoBehaviour
 
     IEnumerator SendSaveRequest(string json)
     {
-        string url = $"http://13.208.122.37:8000/api/save_placements";
+        string url = $"https://plantmate.site/unity/api/save_placements";
 
         UnityWebRequest request = new UnityWebRequest(url, "POST");
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
         request.uploadHandler = new UploadHandlerRaw(bodyRaw);
         request.downloadHandler = new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
+
+        request.SetRequestHeader("Authorization", "Bearer " + GameManager.jwtToken);
 
         yield return request.SendWebRequest();
 
