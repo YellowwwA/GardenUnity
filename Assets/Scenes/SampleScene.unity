@@ -583,7 +583,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1315091948292694193, guid: dfaf2105c7a3bae4a867ce02e9237363, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: dfaf2105c7a3bae4a867ce02e9237363, type: 3}
 --- !u!1 &235706381
 GameObject:
@@ -1759,9 +1760,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.5
-  m_Height: 2
+  m_Height: 1.2371998
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: -0.3814001, z: 0}
 --- !u!23 &381391666
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2753,7 +2754,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -917055044759760927, guid: e7101a69a982e764fb87764134999d3b, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: e7101a69a982e764fb87764134999d3b, type: 3}
 --- !u!4 &607926738 stripped
 Transform:
@@ -2950,7 +2952,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 688160199}
   m_LocalRotation: {x: 0.10600374, y: 0, z: 0, w: 0.99436575}
-  m_LocalPosition: {x: 0, y: 4, z: 0}
+  m_LocalPosition: {x: 0, y: 3.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2967,7 +2969,7 @@ Camera:
   m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.8207547, g: 0.9695621, b: 1, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -3106,6 +3108,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1201439452}
     m_Modifications:
+    - target: {fileID: 3064801662246925106, guid: a1b4d59e2c59e8048925614a19a521a4, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 66d2f4348fd142f4bab728a10623ad58, type: 2}
     - target: {fileID: 3569279380451398375, guid: a1b4d59e2c59e8048925614a19a521a4, type: 3}
       propertyPath: m_Name
       value: Tile_Water (1)
@@ -5752,7 +5758,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1315091948292694193, guid: dfaf2105c7a3bae4a867ce02e9237363, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: dfaf2105c7a3bae4a867ce02e9237363, type: 3}
 --- !u!1001 &1915962638
 PrefabInstance:

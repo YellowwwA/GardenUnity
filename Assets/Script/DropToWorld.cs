@@ -51,94 +51,95 @@ public class DropToWorld : MonoBehaviour
     /// <summary>
     /// 인벤토리에서 드래그로 배치
     /// </summary>
-    public static void DropItem(ItemData itemData, Vector3 dropPos)
+    public static bool DropItem(ItemData itemData, Vector3 dropPos)
     {
         if (itemData == null || itemData.worldPrefab == null)
         {
             Debug.LogError($"❌ worldPrefab이 null입니다. photo_id = {itemData?.photo_id}");
-            return;
+            return false;
         }
 
-        if (DropPointManager.Instance.IsValidDropPosition(dropPos, out Vector3 nearestDropPoint))
+        if (!DropPointManager.Instance.IsValidDropPosition(dropPos, out Vector3 nearestDropPoint))
         {
-            Vector3 offset = new Vector3(0f, 1.1f, 0f);
-            Quaternion rotation = Quaternion.Euler(10f, 0f, 0f);
+            Debug.Log("❌ 드롭 실패: 유효한 위치 아님");
+            return false; // ❌ 인벤토리 유지하고 아무 작업도 하지 않음
+        }
 
-            GameObject item;
+        Vector3 offset = new Vector3(0f, 1.1f, 0f);
+        Quaternion rotation = Quaternion.Euler(10f, 0f, 0f);
 
-            // ✅ 비활성화된 프리팹이라면 그대로 재사용
-            if (!itemData.worldPrefab.activeSelf)
+        GameObject item;
+
+        // ✅ 비활성화된 프리팹이라면 재사용
+        if (!itemData.worldPrefab.activeSelf)
+        {
+            if (itemData.worldPrefab.scene.IsValid())
             {
-                //item = itemData.worldPrefab;
-                //item.transform.position = nearestDropPoint + offset;
-                //item.transform.rotation = rotation;
-                //item.SetActive(true);
-
-                // ✅ 아래처럼 강제 인스턴스화
-                if (itemData.worldPrefab.scene.IsValid())
-                {
-                    Debug.Log("♻️ 씬에 존재하는 worldPrefab 감지 → 복사");
-                    item = Instantiate(itemData.worldPrefab);
-                }
-                else
-                {
-                    item = itemData.worldPrefab; // 리소스에서 불러온 원본이면 그냥 사용
-                }
-                item.transform.position = nearestDropPoint + offset;
-                item.transform.rotation = rotation;
-                item.SetActive(true);
-
-                Debug.Log("♻️ 회수된 프리팹 재사용");
+                Debug.Log("♻️ 씬에 존재하는 worldPrefab 감지 → 복사");
+                item = GameObject.Instantiate(itemData.worldPrefab);
             }
             else
             {
-                // 이미 활성화 상태이면 새로 인스턴스 생성
-                item = GameObject.Instantiate(itemData.worldPrefab, nearestDropPoint + offset, rotation);
-                item.SetActive(true); // ✅ 반드시 활성화시켜야 화면에 나타남
-                Debug.Log("✨ 새 프리팹 인스턴스 생성");
-            }
-            SetupVisuals(item);
-
-            // LookAtPlayer 활성화
-            LookAtPlayer look = item.GetComponent<LookAtPlayer>();
-            if (look != null)
-            {
-                look.enabled = true;
+                item = itemData.worldPrefab;
             }
 
-            var clickable = item.AddComponent<WorldClickableItem>();
-            clickable.dropPointPosition = nearestDropPoint;
-            clickable.itemData = itemData;
+            item.transform.position = nearestDropPoint + offset;
+            item.transform.rotation = rotation;
+            item.SetActive(true);
 
-            int dropIndex = DropPointManager.Instance.GetDropPointIndex(nearestDropPoint);
-            if (dropIndex == -1)
-            {
-                Debug.LogWarning("⚠ 드롭 위치 인덱스 찾기 실패");
-                return;
-            }
-
-            Photo newPhoto = new Photo
-            {
-                plant_id = itemData.photo_id,
-                placenum = dropIndex + 1
-            };
-
-            clickable.photoData = newPhoto;
-            InventoryManager.Instance.RegisterPlacedPhoto(newPhoto, item);
-
-            if (Instance.arrowHint != null)
-            {
-                Destroy(Instance.arrowHint);
-                Debug.Log("🧭 화살표 비활성화됨");
-            }
-
-            Debug.Log("✅ 드롭 성공!");
+            Debug.Log("♻️ 회수된 프리팹 재사용");
         }
         else
         {
-            Debug.Log("❌ 드롭 실패: 유효한 위치 아님");
+            // 이미 활성화 상태이면 새 인스턴스 생성
+            item = GameObject.Instantiate(itemData.worldPrefab, nearestDropPoint + offset, rotation);
+            item.SetActive(true);
+            Debug.Log("✨ 새 프리팹 인스턴스 생성");
         }
+
+        SetupVisuals(item);
+
+        // LookAtPlayer 활성화
+        LookAtPlayer look = item.GetComponent<LookAtPlayer>();
+        if (look != null)
+        {
+            look.enabled = true;
+        }
+
+        var clickable = item.AddComponent<WorldClickableItem>();
+        clickable.dropPointPosition = nearestDropPoint;
+        clickable.itemData = itemData;
+
+        int dropIndex = DropPointManager.Instance.GetDropPointIndex(nearestDropPoint);
+        if (dropIndex == -1)
+        {
+            Debug.LogWarning("⚠ 드롭 위치 인덱스 찾기 실패");
+            Destroy(item); // 생성된 오브젝트 제거
+            return false;
+        }
+
+        Photo newPhoto = new Photo
+        {
+            plant_id = itemData.photo_id,
+            placenum = dropIndex + 1
+        };
+
+        clickable.photoData = newPhoto;
+        InventoryManager.Instance.RegisterPlacedPhoto(newPhoto, item);
+
+        // ✅ 여기서만 인벤토리 제거: 드롭이 성공했을 때만
+        InventoryManager.Instance.RemoveItem(itemData);
+
+        if (Instance.arrowHint != null)
+        {
+            Destroy(Instance.arrowHint);
+            Debug.Log("🧭 화살표 비활성화됨");
+        }
+
+        Debug.Log("✅ 드롭 성공!");
+        return true;
     }
+
 
 
     /// <summary>
@@ -149,7 +150,7 @@ public class DropToWorld : MonoBehaviour
         SpriteRenderer renderer = obj.GetComponentInChildren<SpriteRenderer>();
         if (renderer != null && renderer.sprite != null)
         {
-            obj.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+            obj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
 
             float height = renderer.sprite.bounds.size.y;
 

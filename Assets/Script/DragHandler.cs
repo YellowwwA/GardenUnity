@@ -34,7 +34,6 @@ public class DragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        // 드래그 UI 제거
         if (dragImageObj != null)
         {
             Destroy(dragImageObj);
@@ -47,22 +46,25 @@ public class DragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
             return;
         }
 
+        bool success = false;
+
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             Vector3 dropPosition = hit.point;
-
-            // ✅ 드롭 처리 위임
-            DropToWorld.DropItem(draggingItem, dropPosition);
+            success = DropToWorld.DropItem(draggingItem, dropPosition);  // ✅ 성공 여부 확인
         }
         else
         {
             Debug.Log("❌ 유효한 드롭 위치가 아닙니다.");
         }
 
-        // ✅ 인벤토리 제거
-        InventoryManager.Instance.RemoveItem(draggingItem);
+        if (success)
+        {
+            InventoryManager.Instance.RemoveItem(draggingItem);  // ✅ 성공했을 때만 제거
+        }
 
         draggingItem = null;
     }
+
 }

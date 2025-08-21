@@ -31,18 +31,18 @@ public class SaveManager : MonoBehaviour
 
         List<Photo> placedPhotos = InventoryManager.Instance.GetPlacedPhotos();
 
+        // ✅ CHANGED: 서버에는 plant_id + placenum만 보냄 (user_id/s3_key 불필요)
+        var payload = new SavePayload { photos = new List<SaveItem>() };
         foreach (Photo photo in placedPhotos)
         {
-            if (photo.user_id == 0)
-                photo.user_id = userId;
-
-            if (string.IsNullOrEmpty(photo.s3_key))
-                photo.s3_key = $"plantimage/pixel_image/{photo.plant_id}.png";
+            payload.photos.Add(new SaveItem
+            {
+                plant_id = photo.plant_id,
+                placenum = photo.placenum   // 0이면 해제, >0이면 배치
+            });
         }
 
-        PhotoListWrapper wrapper = new PhotoListWrapper { photos = placedPhotos };
-
-        string json = JsonUtility.ToJson(wrapper);
+        string json = JsonUtility.ToJson(payload);
         StartCoroutine(SendSaveRequest(json));
     }
 
